@@ -1,0 +1,25 @@
+# Thư mục cache của Python
+__pycache__/
+*.pyc
+
+# Thư mục và file của VSCode
+.vscode/
+
+# File môi trường ảo
+tf_env/
+*.env
+venv/
+# File mô hình huấn luyện (model)
+*.h5
+*.keras
+
+# File dữ liệu gốc (tùy theo dự án, có thể giữ lại nếu cần)
+training_model/
+
+# File cấu hình và lock không cần thiết nếu dùng pipenv
+Pipfile.lock
+
+
+# Thư mục chứa tài liệu
+doc/
+pipfile

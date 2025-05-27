@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Movie{% endblock %}
+
+{% block content %}
+<section class="login spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="login__form">
+                    <h3>Login</h3>
+                    <form action="{{ url_for('auth.login') }}" method="POST">
+                        <div class="input__item">
+                            <input type="text" id="email" name="email" placeholder="Email address">
+                            <span class="icon_mail"></span>
+                        </div>
+                        <div class="input__item">
+                            <input type="password" id="password" name="password" placeholder="Password">
+                            <span class="icon_lock"></span>
+                        </div>
+                        <button type="submit" class="site-btn">Login Now</button>
+                    </form>
+                    <a href="#" class="forget_pass">Forgot Your Password?</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="login__register">
+                    <h3>Don’t Have An Account?</h3>
+                    <a href="{{ url_for('auth.sign_up') }}" class="primary-btn">Register Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
