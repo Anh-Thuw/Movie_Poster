@@ -1,50 +1,49 @@
 {% extends "base.html" %}
 
-{% block title %}Nhận diện thể loại phim{% endblock %}
+{% block title %}Movie Genre Recognition{% endblock %}
 
 {% block content %}
 <section class="categories spad" style="min-height: 300px; display: flex; align-items: center; color: white;">
     <div class="container text-center">
-        <!-- Tiêu đề -->
-        <h1 class="display-4 fw-bold mb-3" style="color: white;">Nhận diện thể loại phim</h1>
+        <!-- Title -->
+        <h1 class="display-4 fw-bold mb-3" style="color: white;">Movie Genre Recognition</h1>
         <p class="lead mb-4" style="color: white;">
-            Sử dụng trí tuệ nhân tạo tiên tiến để nhận diện thể loại của phim từ hình ảnh một cách nhanh chóng và chính xác.
+            Use advanced artificial intelligence to quickly and accurately identify movie genres from images.
         </p>
 
-        <!-- Nút ban đầu -->
-        <button id="btnStart" class="btn btn-light btn-lg mb-4">Bắt đầu nhận diện</button>
+        <!-- Start button -->
+        <button id="btnStart" class="btn btn-light btn-lg mb-4">Start Recognition</button>
 
-        <!-- Input ảnh ẩn -->
+        <!-- Hidden image input -->
         <input type="file" id="inputImage" accept="image/*" style="display: none;">
 
-        <!-- Giao diện 2 cột -->
+        <!-- 2-column interface -->
         <div id="detectionSection" class="row justify-content-center align-items-start mt-4" style="display: none;">
-            <!-- Cột trái: ảnh -->
+            <!-- Left column: image -->
             <div class="col-md-6 mb-4">
                 <div id="preview" style="height: 320px; border: 2px dashed rgba(255,255,255,0.5); border-radius: 8px; display: flex; justify-content: center; align-items: center; flex-direction: column; background-color: rgba(255,255,255,0.1); cursor: pointer;">
-                    <span id="preview-text" style="color: rgba(255,255,255,0.7); text-align: center;">Kéo ảnh vào đây<br>hoặc click để chọn lại ảnh</span>
+                    <span id="preview-text" style="color: rgba(255,255,255,0.7); text-align: center;">Drag image here<br>or click to reselect</span>
                     <img id="preview-img" src="" alt="" style="max-width: 100%; max-height: 250px; border-radius: 8px; display: none; margin-top: 10px;">
                 </div>
                 <p id="image-name" class="mt-2" style="color: #ccc; font-style: italic;"></p>
             </div>
 
-            <!-- Cột phải: nút nhận diện giữa theo chiều cao -->
+            <!-- Right column: detection button centered vertically -->
             <div class="col-md-4 mb-4 d-flex align-items-center justify-content-center" style="height: 320px;">
                 <button id="btnDetect" class="btn btn-primary btn-lg w-100">
-                    <i class="fas fa-magnifying-glass me-2"></i>Nhận diện ngay
+                    <i class="fas fa-magnifying-glass me-2"></i>Detect Now
                 </button>
-
             </div>
         </div>
 
-        <!-- Kết quả -->
+        <!-- Result -->
         <div id="result" class="mt-4" style="display: none;">
-            <h4 style="color: #00e676;">Thể loại phim: <span id="genre-result">Đang xử lý...</span></h4>
+            <h4 style="color: #00e676;">Movie Genre: <span id="genre-result">Processing...</span></h4>
         </div>
     </div>
 </section>
 
-<!-- Font Awesome (cho icon) -->
+<!-- Font Awesome (for icons) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
 <script>
@@ -59,17 +58,17 @@
     const resultBox = document.getElementById('result');
     const genreResult = document.getElementById('genre-result');
 
-    // Chọn ảnh ban đầu
+    // Initial image selection
     btnStart.addEventListener('click', () => {
         inputImage.click();
     });
 
-    // Cho phép click vùng preview để chọn lại ảnh
+    // Allow clicking preview area to reselect image
     preview.addEventListener('click', () => {
         inputImage.click();
     });
 
-    // Khi người dùng chọn ảnh
+    // When user selects an image
     inputImage.addEventListener('change', () => {
         const file = inputImage.files[0];
         if (file && file.type.startsWith('image/')) {
@@ -78,35 +77,35 @@
             previewImg.src = imgURL;
             previewImg.style.display = 'block';
             previewText.style.display = 'none';
-            imageName.textContent = `Ảnh đã chọn là: ${file.name}`;
+            imageName.textContent = `Selected image: ${file.name}`;
 
             btnStart.style.display = 'none';
             detectionSection.style.display = 'flex';
-            resultBox.style.display = 'none'; // Ẩn kết quả nếu chọn lại ảnh
-            resetDetectButton(); // Reset nút về mặc định
+            resultBox.style.display = 'none'; // Hide result if reselecting
+            resetDetectButton(); // Reset detect button
         } else {
-            alert('Vui lòng chọn đúng định dạng hình ảnh.');
+            alert('Please select a valid image format.');
         }
     });
 
-    // Khi nhấn nút "Nhận diện ngay"
+    // When clicking "Detect Now"
     btnDetect.addEventListener('click', () => {
         if (btnDetect.dataset.state === 'ready') {
-            // Gọi API hoặc giả lập kết quả
+            // Call API or simulate result
             resultBox.style.display = 'block';
-            genreResult.textContent = 'Đang xử lý...';
+            genreResult.textContent = 'Processing...';
             setTimeout(() => {
-                // Giả lập kết quả
-                genreResult.textContent = 'Hành động, Khoa học viễn tưởng';
+                // Simulate result
+                genreResult.textContent = 'Action, Science Fiction';
 
-                // Đổi nút sang "Nhận diện lại"
-                btnDetect.innerHTML = `<i class="fas fa-rotate-left me-2"></i>Nhận diện lại`;
+                // Change button to "Detect Again"
+                btnDetect.innerHTML = `<i class="fas fa-rotate-left me-2"></i>Detect Again`;
                 btnDetect.classList.remove('btn-primary');
                 btnDetect.classList.add('btn-secondary');
                 btnDetect.dataset.state = 'reset';
             }, 1000);
         } else {
-            // Nếu bấm "Nhận diện lại", reset về ban đầu
+            // If "Detect Again" is clicked, reset
             inputImage.value = '';
             previewImg.src = '';
             previewImg.style.display = 'none';
@@ -118,14 +117,13 @@
     });
 
     function resetDetectButton() {
-    btnDetect.innerHTML = `<i class="fas fa-magnifying-glass me-2"></i>Nhận diện ngay`;
-    btnDetect.classList.remove('btn-secondary');
-    btnDetect.classList.add('btn-primary');
-    btnDetect.dataset.state = 'ready';
+        btnDetect.innerHTML = `<i class="fas fa-magnifying-glass me-2"></i>Detect Now`;
+        btnDetect.classList.remove('btn-secondary');
+        btnDetect.classList.add('btn-primary');
+        btnDetect.dataset.state = 'ready';
     }
 
-
-    // Khởi tạo trạng thái ban đầu
+    // Initialize default state
     resetDetectButton();
 </script>
 {% endblock %}

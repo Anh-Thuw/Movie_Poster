@@ -1,58 +1,58 @@
 {% extends "base.html" %}
 
-{% block title %}Liên hệ{% endblock %}
+{% block title %}Contact{% endblock %}
 {% block content %}
 <section id="contact" class="contact section py-5">
   <div class="container section-title text-center" data-aos="fade-up">
-    <h2 class="text-white">Liên hệ</h2>
-    <p class="text-light">Nếu bạn có bất kỳ câu hỏi hoặc yêu cầu nào, vui lòng gửi cho chúng tôi thông tin của bạn.</p>
+    <h2 class="text-white">Contact</h2>
+    <p class="text-light">If you have any questions or requests, please send us your information.</p>
   </div>
 
   <div class="container" data-aos="fade-up" data-aos-delay="100">
     <div class="row gy-4">
 
-      <!-- Thông tin liên hệ (nền trắng) -->
+      <!-- Contact information (white background) -->
       <div class="col-lg-5">
         <div class="info-wrap bg-white text-dark p-4 rounded shadow">
 
-          <!-- Địa chỉ -->
+          <!-- Address -->
           <div class="info-item d-flex align-items-start mb-4 gap-3" data-aos="fade-up" data-aos-delay="200">
-            <div class="icon-wrapper d-flex justify-content-center align-items-center bg-light text-primary rounded-circle shadow-sm"
-                 style="width: 50px; height: 50px;">
+            <div class="mr-2 icon-wrapper d-flex justify-content-center align-items-center bg-light text-primary rounded-circle shadow-sm"
+                 style="width: 60px; height: 50px;">
               <i class="bi bi-geo-alt-fill fs-4"></i>
             </div>
             <div>
-              <h5 class="mb-1">Địa chỉ</h5>
-              <p>Trường Đại học Công nghệ thông tin và Truyền thông Việt - Hàn </p>
+              <h5 class="mb-1"><b>Address</b></h5>
+              <p>Vietnam - Korea University of Information and Communication Technology</p>
             </div>
           </div>
 
-          <!-- Gọi cho chúng tôi -->
+          <!-- Call us -->
           <div class="info-item d-flex align-items-start mb-4 gap-3" data-aos="fade-up" data-aos-delay="300">
-            <div class="icon-wrapper d-flex justify-content-center align-items-center bg-light text-success rounded-circle shadow-sm"
+            <div class="mr-2 icon-wrapper d-flex justify-content-center align-items-center bg-light text-success rounded-circle shadow-sm"
                  style="width: 50px; height: 50px;">
               <i class="bi bi-telephone-fill fs-4"></i>
             </div>
             <div>
-              <h5 class="mb-1">Gọi cho chúng tôi</h5>
-              <p>+84 123 456 789</p>
+              <h5 class="mb-1"><b>Call Us</b></h5>
+              <p>+84 867 942 231</p>
             </div>
           </div>
 
           <!-- Email -->
           <div class="info-item d-flex align-items-start mb-4 gap-3" data-aos="fade-up" data-aos-delay="400">
-            <div class="icon-wrapper d-flex justify-content-center align-items-center bg-light text-danger rounded-circle shadow-sm"
+            <div class="mr-2 icon-wrapper d-flex justify-content-center align-items-center bg-light text-danger rounded-circle shadow-sm"
                  style="width: 50px; height: 50px;">
               <i class="bi bi-envelope-fill fs-4"></i>
             </div>
             <div>
-              <h5 class="mb-1">Email</h5>
+              <h5 class="mb-1"><b>Email</b></h5>
               <p>thuna.22it@vku.udn.vn</p>
             </div>
           </div>
 
-          <!-- Bản đồ -->
-          <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d48389.78314118045!2d-74.006138!3d40.710059!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a22a3bda30d%3A0xb89d1fe6bc499443!2sDowntown%20Conference%20Center!5e0!3m2!1sen!2sus!4v1676961268712!5m2!1sen!2sus"
+          <!-- Map -->
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3835.734024718619!2d108.253227!3d15.975260299999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3142108997dc971f%3A0x1295cb3d313469c9!2sVietnam%20-%20Korea%20University%20of%20Information%20and%20Communication%20Technology!5e0!3m2!1sen!2s!4v1748414559452!5m2!1sen!2s" 
                   frameborder="0"
                   style="border:0; width: 100%; height: 270px;"
                   allowfullscreen=""
@@ -64,7 +64,7 @@
         </div>
       </div>
 
-      <!-- Form liên hệ (nền trắng) -->
+      <!-- Contact form (white background) -->
       <div class="col-lg-7">
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
@@ -80,28 +80,34 @@
         <form method="POST" action="{{ url_for('views.contact') }}"
               class="php-email-form bg-white text-dark p-4 rounded shadow">
           <div class="row gy-4">
-            <div class="col-md-6">
-              <label for="name-field" class="form-label">Họ và tên</label>
-              <input type="text" name="name" id="name-field" class="form-control" required>
+            <div class="col-md-6 mb-3">
+              <label for="name-field" class="form-label">Full Name<span style="color: red;">*</span></label>
+              <input type="text" name="name" id="name-field" class="form-control" placeholder="Enter your full name" required>
             </div>
 
-            <div class="col-md-6">
-              <label for="email-field" class="form-label">Email</label>
-              <input type="email" name="email" id="email-field" class="form-control" required>
+            <div class="col-md-6 mb-3">
+              <label for="email-field" class="form-label">Email<span style="color: red;">*</span></label>
+              <input type="email" name="email" id="email-field" class="form-control" placeholder="Enter your email" required>
             </div>
 
-            <div class="col-md-12">
-              <label for="subject-field" class="form-label">Tiêu đề</label>
-              <input type="text" name="subject" id="subject-field" class="form-control" required>
+            <div class="col-md-12 mb-3">
+              <label for="subject-field" class="form-label">Subject<span style="color: red;">*</span></label>
+              <input type="text" name="subject" id="subject-field" class="form-control" placeholder="Enter the subject" required>
             </div>
 
-            <div class="col-md-12">
-              <label for="message-field" class="form-label">Nội dung</label>
-              <textarea name="message" id="message-field" rows="6" class="form-control" required></textarea>
+            <div class="col-md-12 mb-3">
+              <label for="message-field" class="form-label">Message<span style="color: red;">*</span></label>
+              <textarea name="message" id="message-field" rows="6" class="form-control" placeholder="Enter your message here." required></textarea>
             </div>
 
             <div class="col-md-12 text-center">
-              <button type="submit" class="btn btn-dark mt-3">Gửi tin nhắn</button>
+              <button type="submit"
+                class="btn mt-3"
+                style="background-color: #ff5858; border: none; color: white; transition: background-color 0.3s ease;"
+                onmouseover="this.style.backgroundColor='#cc0000'"
+                onmouseout="this.style.backgroundColor='#ff4d4d'">
+                Send Message
+              </button>            
             </div>
           </div>
         </form>

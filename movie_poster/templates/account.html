@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Account
+{% endblock %}
+
+{% block content %}
+<main id="main">
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs" style="">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mt-4" style="color: white;">
+                Account
+            </h1>
+        </div>
+    </section>
+
+    <section style="">
+        <div class="container py-5">
+            <div class="row">
+                <!-- Ảnh và nút -->
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-body text-center">
+                            <img src="{{ url_for('static', filename='img/user.png') }}" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
+                            <h5 class="my-3">
+                                <b>Hello</b> <b style="color: #e56;">{{ current_user.first_name }}</b><b>!</b>
+                            </h5>
+                            <div class="d-flex justify-content-center mb-2">
+                                <a href="{{ url_for('auth.change_password') }}" class="btn btn-outline-primary ms-1 ml-1">Change pass</a>
+                                <a href="{{ url_for('auth.edit_profile') }}" class="btn btn-outline-secondary ms-1 ml-1">Edit profile</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thông tin -->
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-3"><p class="mb-0"><b>Account: </b></p></div>
+                                <div class="col-sm-9"><p class="text-muted mb-0"><i>{{ current_user.first_name }}</i></p></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3"><p class="mb-0"><b>Email:</b></p></div>
+                                <div class="col-sm-9"><p class="text-muted mb-0"><i>{{ current_user.email }}</i></p></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3"><p class="mb-0"><b>Password:</b></p></div>
+                                <div class="col-sm-9"><p class="text-muted mb-0"><i>********</i></p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
