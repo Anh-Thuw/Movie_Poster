@@ -64,3 +64,50 @@ def sign_up():
             return redirect(url_for('views.home'))
 
     return render_template("signup.html", user=current_user)
+
+
+@auth.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    if request.method == 'POST':
+        new_name = request.form.get('name')
+        new_email = request.form.get('email')
+
+        if not new_name or not new_email:
+            flash('Please fill out all required fields.', 'danger')
+        else:
+            current_user.first_name = new_name
+            current_user.email = new_email
+            try:
+                db.session.commit()
+                flash('Profile updated successfully.', 'success')
+            except Exception as e:
+                db.session.rollback()
+                flash(f'Error updating profile: {str(e)}', 'danger')
+
+        return redirect(url_for('views.account'))
+
+    return render_template("edit_profile.html", current_user=current_user)
+
+@auth.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    if request.method == 'POST':
+        current_pw = request.form.get('current_password')
+        new_pw = request.form.get('new_password')
+        confirm_pw = request.form.get('confirm_password')
+
+        if not check_password_hash(current_user.password, current_pw):
+            flash('Current password is incorrect.', category='error')
+        elif new_pw != confirm_pw:
+            flash('New password does not match the confirmation.', category='error')
+        elif len(new_pw) < 7:
+            flash('New password must be at least 7 characters long.', category='error')
+        else:
+            current_user.password = generate_password_hash(new_pw, method='pbkdf2:sha256')
+            db.session.commit()
+            flash('Password changed successfully.', category='success')
+            return redirect(url_for('views.home'))
+
+    return render_template('change_password.html', user=current_user)
+

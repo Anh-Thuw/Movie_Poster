@@ -44,18 +44,19 @@ def contact():
         message = request.form['message']
 
         # Cấu hình gửi email
-        to_email = "your@email.com"
+        to_email = "thuna.22it@vku.udn.vn"
         content = f"Tên: {name}\nEmail: {email}\nChủ đề: {subject}\n\nNội dung:\n{message}"
 
         try:
             msg = MIMEText(content)
             msg['Subject'] = f"Liên hệ: {subject}"
-            msg['From'] = email
+            msg['From'] = "quynhpn.22it@vku.udn.vn"
             msg['To'] = to_email
+            msg.add_header('Reply-To', email)
 
             smtp_server = smtplib.SMTP('smtp.gmail.com', 587)
             smtp_server.starttls()
-            smtp_server.login('your@gmail.com', 'your_app_password')  # Replace with your app password
+            smtp_server.login('quynhpn.22it@vku.udn.vn', 'nqox tbtc zxel dlue')  # Replace with your app password
             smtp_server.send_message(msg)
             smtp_server.quit()
 
@@ -66,7 +67,6 @@ def contact():
         return redirect(url_for('views.contact'))
 
     return render_template('contact.html', current_user=current_user)
-
 
 # Load mô hình
 model = load_model('/movie_poster/training-model/save_model.keras')
@@ -104,3 +104,8 @@ def preprocess_image(image_bytes):
     image_array = np.array(image) / 255.0
     image_array = np.expand_dims(image_array, axis=0)
     return image_array
+
+@views.route('/account')
+@login_required
+def account():
+    return render_template('account.html', current_user=current_user)
