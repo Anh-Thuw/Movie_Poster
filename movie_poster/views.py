@@ -12,6 +12,9 @@ import pandas as pd
 import joblib
 import smtplib
 from email.mime.text import MIMEText
+from flask import send_file
+from PIL import Image
+import io
 
 views = Blueprint('views', __name__)
 
@@ -63,3 +66,41 @@ def contact():
         return redirect(url_for('views.contact'))
 
     return render_template('contact.html', current_user=current_user)
+
+
+# Load mô hình
+model = load_model('/movie_poster/training-model/save_model.keras')
+
+# Load danh sách tên thể loại từ file pickle
+with open('path/to/label_encoder.pkl', 'rb') as f:
+    class_names = pickle.load(f)
+
+@views.route('/predict', methods=['POST'])
+def predict():
+    if 'image' not in request.files:
+        return jsonify({'error': 'Không có ảnh được gửi'}), 400
+
+    file = request.files['image']
+    if file.filename == '':
+        return jsonify({'error': 'Không có tên file'}), 400
+
+    try:
+        image_bytes = file.read()
+        processed_image = preprocess_image(image_bytes)
+
+        # Dự đoán
+        prediction = model.predict(processed_image)
+        predicted_index = np.argmax(prediction)
+        genre = class_names[predicted_index]  # Ánh xạ chỉ số sang tên thể loại
+
+        return jsonify({'genre': genre})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+def preprocess_image(image_bytes):
+    image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+    image = image.resize((224, 224))  # Tùy kích thước input của mô hình
+    image_array = np.array(image) / 255.0
+    image_array = np.expand_dims(image_array, axis=0)
+    return image_array

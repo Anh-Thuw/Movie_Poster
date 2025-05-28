@@ -35,7 +35,7 @@
                 </button>
 
             </div>
-        </div>
+        </div> 
 
         <!-- Kết quả -->
         <div id="result" class="mt-4" style="display: none;">
@@ -92,19 +92,31 @@
     // Khi nhấn nút "Nhận diện ngay"
     btnDetect.addEventListener('click', () => {
         if (btnDetect.dataset.state === 'ready') {
-            // Gọi API hoặc giả lập kết quả
-            resultBox.style.display = 'block';
-            genreResult.textContent = 'Đang xử lý...';
-            setTimeout(() => {
-                // Giả lập kết quả
-                genreResult.textContent = 'Hành động, Khoa học viễn tưởng';
+            const file = inputImage.files[0];
+            const formData = new FormData();
+            formData.append('image', file);
 
-                // Đổi nút sang "Nhận diện lại"
+            resultBox.style.display = 'block';
+            genreResult.textContent = 'Đang xử lý...'; 
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                genreResult.textContent = data.genre;
+
                 btnDetect.innerHTML = `<i class="fas fa-rotate-left me-2"></i>Nhận diện lại`;
                 btnDetect.classList.remove('btn-primary');
                 btnDetect.classList.add('btn-secondary');
                 btnDetect.dataset.state = 'reset';
-            }, 1000);
+            })
+            .catch(error => {
+                genreResult.textContent = 'Đã xảy ra lỗi khi xử lý ảnh.';
+                console.error(error);
+            });
+
         } else {
             // Nếu bấm "Nhận diện lại", reset về ban đầu
             inputImage.value = '';

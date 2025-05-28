@@ -14,25 +14,25 @@
                         <nav class="header__menu mobile-menu">
                             <ul>
                                 <li class="active">
-                                    <a href="{{ url_for('views.index') }}">Homepage</a>
+                                    <a href="{{ url_for('views.index') }}">Trang chủ </a>
                                 </li>
                                 <li>
                                     {% if current_user.is_authenticated %}
-                                    <a href="{{ url_for('views.categories') }}">Categories <span class="arrow_carrot-down"></span></a>
+                                    <a href="{{ url_for('views.categories') }}">Phân loại <span class="arrow_carrot-down"></span></a>
                                     <ul class="dropdown">
-                                        <li><a href="{{ url_for('views.categories') }}">Categories</a></li>
-                                        <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+                                        <li><a href="{{ url_for('views.categories') }}">Phân loại</a></li>
+                                        <li><a href="{{ url_for('auth.logout') }}">Đăng xuất </a></li>
                                     </ul>
                                     {% else %}
-                                    <a href="{{ url_for('auth.login') }}">Categories <span class="arrow_carrot-down"></span></a>
+                                    <a href="{{ url_for('auth.login') }}">Phân loại  <span class="arrow_carrot-down"></span></a>
                                     <ul class="dropdown">
-                                        <li><a href="{{ url_for('auth.login') }}">Categories</a></li>
-                                        <li><a href="{{ url_for('auth.sign_up') }}">Sign Up</a></li>
-                                        <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                                        <li><a href="{{ url_for('auth.login') }}">Phân loại</a></li>
+                                        <li><a href="{{ url_for('auth.sign_up') }}">Đăng kí</a></li>
+                                        <li><a href="{{ url_for('auth.login') }}">Đăng nhập</a></li>
                                     </ul>
                                     {% endif %}
                                 </li>
-                                <li><a href="{{ url_for('views.contact')}}"></i> Contact</a></li>
+                                <li><a href="{{ url_for('views.contact')}}"></i> Liên hệ </a></li>
                             </ul>
                         </nav>
                     </div>
