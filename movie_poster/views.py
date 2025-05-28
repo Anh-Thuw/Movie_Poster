@@ -72,26 +72,30 @@ with open('movie_poster/training-model/label_encoder.pkl', 'rb') as f:
 @views.route('/home/categories', methods=['GET', 'POST'])
 @login_required
 def categories():
-    genre = None  # Mặc định không có kết quả
-
     if request.method == 'POST':
+        # Kiểm tra file ảnh
         if 'image' not in request.files:
-            return render_template("categories.html", genre="Không có ảnh được gửi")
+            return jsonify({"error": "Không có ảnh được gửi"}), 400
 
         file = request.files['image']
         if file.filename == '':
-            return render_template("categories.html", genre="Không có tên file")
+            return jsonify({"error": "Không có tên file"}), 400
 
         try:
             image_bytes = file.read()
             processed_image = preprocess_image(image_bytes)
             prediction = model.predict(processed_image)
-            predicted_index = np.argmax(prediction)
-            genre = label_encoder[predicted_index]
+            # Lấy top 3 chỉ số có xác suất cao nhất
+            top_indices = prediction[0].argsort()[-3:][::-1]  # Sắp xếp giảm dần
+            genre = [label_encoder[i] for i in top_indices]
         except Exception as e:
             genre = f"Lỗi: {str(e)}"
 
-    return render_template("categories.html", genre=genre)
+        # Trả JSON
+        return jsonify({"genre": genre})
+
+    # GET request trả về HTML bình thường
+    return render_template("categories.html")
 
 def preprocess_image(image_bytes):
     image = Image.open(io.BytesIO(image_bytes)).convert('RGB')

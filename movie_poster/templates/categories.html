@@ -5,58 +5,81 @@
 {% block content %}
 <section class="categories spad" style="min-height: 300px; display: flex; align-items: center; color: white;">
     <div class="container text-center">
-        <h1 class="display-4 fw-bold mb-3" style="color: white;">Movie Genre Recognition</h1>
-        <p class="lead mb-4" style="color: white;">
+        <h1 class="display-4 fw-bold mb-3 text-white">Movie Genre Recognition</h1>
+        <p class="lead mb-4 text-white">
             Use advanced artificial intelligence to quickly and accurately identify movie genres from images.
         </p>
 
         <button id="btnStart" class="btn btn-light btn-lg mb-4">Start Recognition</button>
 
         <form id="uploadForm" action="{{ url_for('views.categories') }}" method="POST" enctype="multipart/form-data">
-            <input type="file" id="inputImage" name="image" accept="image/*" style="display: none;">
+            <input type="file" id="inputImage" name="image" accept="image/*" hidden>
 
-            <div id="detectionSection" class="row justify-content-center align-items-start mt-4"
-                 style="display: {% if genre %}flex{% else %}none{% endif %};">
+            <div id="detectionSection"
+                 class="row justify-content-center align-items-start mt-4 {% if not genre %}d-none{% endif %}">
                 <div class="col-md-6 mb-4">
-                    <div id="preview" style="height: auto; border: 2px dashed rgba(255,255,255,0.5); border-radius: 8px;
-                         display: flex; justify-content: center; align-items: center; flex-direction: column;
-                         background-color: rgba(255,255,255,0.1); cursor: pointer; padding: 20px;">
-                        <span id="preview-text" style="color: rgba(255,255,255,0.7); text-align: center;
-                              {% if genre %}display: none;{% endif %}">Click here to select image</span>
+                    <div id="preview" class="preview-box">
+                        <span id="preview-text"
+                              class="preview-text {% if genre %}d-none{% endif %}">
+                            Click here to select image
+                        </span>
                         <img id="preview-img"
                              src="{% if genre and image_url %}{{ image_url }}{% endif %}"
-                             alt="" style="max-width: 100%; max-height: 250px; border-radius: 8px;
-                             {% if genre %}display: block;{% else %}display: none;{% endif %}; margin-top: 10px;">
+                             alt=""
+                             class="preview-img {% if genre %}d-block{% else %}d-none{% endif %}">
                     </div>
-                    <p id="image-name" class="mt-2" style="color: #ccc; font-style: italic;">
+                    <p id="image-name" class="mt-2 text-secondary fst-italic">
                         {% if image_name %}Selected image: {{ image_name }}{% endif %}
                     </p>
                 </div>
 
                 <div class="col-md-4 mb-4 d-flex align-items-center justify-content-center" style="height: 320px;">
-                    <button type="submit" id="btnDetect" class="btn {% if genre %}btn-secondary{% else %}btn-primary{% endif %} btn-lg w-100">
-                        {% if genre %}
-                            <i class="fas fa-redo me-2"></i>Detect Again
-                        {% else %}
-                            <i class="fas fa-magnifying-glass me-2"></i>Detect Now
-                        {% endif %}
+                    <button type="button" id="btnDetect" class="btn btn-primary btn-lg w-100">
+                        <i id="btnDetectIcon" class="fas fa-magnifying-glass me-2"></i>
+                        <span id="btnDetectText">Detect Now</span>
                     </button>
+
                 </div>
             </div>
 
-            {% if genre %}
-            <div id="result" class="mt-4">
+            <div id="result" class="mt-4 {% if not genre %}d-none{% endif %}">
                 <h4 style="color: #00e676;">
-                    Movie Genre: <span id="genre-result">{{ genre }}</span>
+                    Movie Genre: <span id="genre-result"></span>
                 </h4>
             </div>
-            {% endif %}
         </form>
     </div>
 </section>
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<style>
+    .preview-box {
+        height: 320px;
+        border: 2px dashed rgba(255, 255, 255, 0.5);
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        background-color: rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+        padding: 20px;
+    }
+
+    .preview-img {
+        max-width: 100%;
+        max-height: 250px;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+
+    .preview-text {
+        color: rgba(255, 255, 255, 0.7);
+        text-align: center;
+    }
+</style>
 
 <script>
     const btnStart = document.getElementById('btnStart');
@@ -69,11 +92,12 @@
 
     // Khi nhấn Start mới hiện khung chọn ảnh và nút Detect
     btnStart?.addEventListener('click', () => {
-        detectionSection.style.display = 'flex';
+        detectionSection.classList.remove('d-none');
+        detectionSection.classList.add('d-flex');
         btnStart.style.display = 'none';
     });
 
-    // Chỉ khi click vào khung preview mới hiện hộp chọn ảnh
+    // Click preview để chọn ảnh
     preview?.addEventListener('click', () => inputImage.click());
 
     // Khi người dùng chọn ảnh
@@ -82,12 +106,79 @@
         if (file && file.type.startsWith('image/')) {
             const imgURL = URL.createObjectURL(file);
             previewImg.src = imgURL;
-            previewImg.style.display = 'block';
-            previewText.style.display = 'none';
+            previewImg.classList.remove('d-none');
+            previewImg.classList.add('d-block');
+            previewText.classList.add('d-none');
             imageName.textContent = `Selected image: ${file.name}`;
         } else {
             alert('Please select a valid image format.');
         }
     });
+
+
+    const btnDetect = document.getElementById('btnDetect');
+    const btnDetectIcon = document.getElementById('btnDetectIcon');
+    const btnDetectText = document.getElementById('btnDetectText');
+    const genreResult = document.getElementById('genre-result');
+    const resultBox = document.getElementById('result');
+    let hasDetected = false; // trạng thái xem đã detect chưa
+
+    btnDetect?.addEventListener('click', async () => {
+        if (hasDetected) {
+            // Nút Detect Again → reset về trạng thái ban đầu
+            inputImage.value = '';
+            previewImg.src = '';
+            previewImg.classList.add('d-none');
+            previewText.classList.remove('d-none');
+            imageName.textContent = '';
+            genreResult.textContent = '';
+            resultBox.classList.add('d-none');
+
+            // Reset nút về Detect Now
+            btnDetect.classList.remove('btn-secondary');
+            btnDetect.classList.add('btn-primary');
+            btnDetectIcon.className = 'fas fa-magnifying-glass me-2';
+            btnDetectText.textContent = 'Detect Now';
+            hasDetected = false;
+            return;
+        }
+
+        // Chưa detect → tiến hành gửi ảnh
+        if (!inputImage.files[0]) {
+            alert('Please select an image first.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', inputImage.files[0]);
+
+        try {
+            const response = await fetch('/home/categories', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            const genres = data.genre;
+
+            if (genres) {
+                const genreResult = document.getElementById('genre-result');
+                genreResult.textContent = Array.isArray(genres) ? genres.join(', ') : genres;
+                
+                resultBox.classList.remove('d-none');
+
+                // Đổi nút thành Detect Again
+                btnDetect.classList.remove('btn-primary');
+                btnDetect.classList.add('btn-secondary');
+                btnDetectIcon.className = 'fas fa-redo me-2';
+                btnDetectText.textContent = 'Detect Again';
+                hasDetected = true;
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error occurred during detection.');
+        }
+    });
+
 </script>
 {% endblock %}
