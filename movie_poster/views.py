@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for 
 from tensorflow.keras.models import load_model
 import numpy as np
-import movie_poster.forms as forms
 import os
 from flask_login import login_required, current_user
 from .models import Note
@@ -29,11 +28,6 @@ def index():
 def home():
     return render_template("index.html")
 
-# Trang categories, yêu cầu đăng nhập
-@views.route('/home/categories')
-@login_required
-def categories():
-    return render_template("categories.html")
 
 @views.route('/home/contact', methods=['GET', 'POST'])
 def contact():
@@ -69,40 +63,41 @@ def contact():
     return render_template('contact.html', current_user=current_user)
 
 # Load mô hình
-model = load_model('/movie_poster/training-model/save_model.keras')
+model = load_model('movie_poster/training-model/save_model.keras')
 
 # Load danh sách tên thể loại từ file pickle
-with open('path/to/label_encoder.pkl', 'rb') as f:
-    class_names = pickle.load(f)
+with open('movie_poster/training-model/label_encoder.pkl', 'rb') as f:
+    label_encoder = pickle.load(f)
 
-@views.route('/predict', methods=['POST'])
-def predict():
-    if 'image' not in request.files:
-        return jsonify({'error': 'Không có ảnh được gửi'}), 400
+@views.route('/home/categories', methods=['GET', 'POST'])
+@login_required
+def categories():
+    genre = None  # Mặc định không có kết quả
 
-    file = request.files['image']
-    if file.filename == '':
-        return jsonify({'error': 'Không có tên file'}), 400
+    if request.method == 'POST':
+        if 'image' not in request.files:
+            return render_template("categories.html", genre="Không có ảnh được gửi")
 
-    try:
-        image_bytes = file.read()
-        processed_image = preprocess_image(image_bytes)
+        file = request.files['image']
+        if file.filename == '':
+            return render_template("categories.html", genre="Không có tên file")
 
-        # Dự đoán
-        prediction = model.predict(processed_image)
-        predicted_index = np.argmax(prediction)
-        genre = class_names[predicted_index]  # Ánh xạ chỉ số sang tên thể loại
+        try:
+            image_bytes = file.read()
+            processed_image = preprocess_image(image_bytes)
+            prediction = model.predict(processed_image)
+            predicted_index = np.argmax(prediction)
+            genre = label_encoder[predicted_index]
+        except Exception as e:
+            genre = f"Lỗi: {str(e)}"
 
-        return jsonify({'genre': genre})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
+    return render_template("categories.html", genre=genre)
 
 def preprocess_image(image_bytes):
     image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
-    image = image.resize((224, 224))  # Tùy kích thước input của mô hình
-    image_array = np.array(image) / 255.0
-    image_array = np.expand_dims(image_array, axis=0)
+    image = image.resize((150, 101))  # resize về kích thước yêu cầu
+    image_array = np.array(image) / 255.0  # chuẩn hóa ảnh về [0,1]
+    image_array = np.expand_dims(image_array, axis=0)  # thêm batch dimension
     return image_array
 
 @views.route('/account')
